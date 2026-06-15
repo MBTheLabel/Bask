@@ -2,7 +2,7 @@
   "name": "bask-travel",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd client && npm install && npm run build",
+    "build": "npm install && cd client && npm install && npm run build && cd ..",
     "start": "node server/index.js"
   },
   "dependencies": {
