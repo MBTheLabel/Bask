@@ -1,0 +1,42 @@
+{
+  "name": "bask-travel",
+  "version": "1.0.0",
+  "description": "BASK High-Touch Travel & Concierge Platform",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "nodemon --exec ts-node server/index.ts",
+    "client:dev": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "node dist/server/index.js",
+    "db:migrate": "node server/db/migrate.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "stripe": "^14.18.0",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express-validator": "^7.0.1",
+    "express-rate-limit": "^7.2.0",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "pdfkit": "^0.14.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/multer": "^1.4.11",
+    "@types/cors": "^2.8.17",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.11.30",
+    "@types/pdfkit": "^0.13.4",
+    "typescript": "^5.4.3",
+    "ts-node": "^10.9.2",
+    "nodemon": "^3.1.0",
+    "concurrently": "^8.2.2"
+  }
+}
