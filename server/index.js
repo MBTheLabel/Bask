@@ -587,7 +587,7 @@ app.get('/api/admin/export-pdf', requireAuth, requireAdmin, async (req, res) => 
 });
 
 // ─── Serve React frontend ──────────────────────────────────────
-const clientBuild = path.join(__dirname, 'client/dist');
+const clientBuild = path.join(__dirname, '../client/dist');
 app.use(express.static(clientBuild));
 app.get('*', (req, res) => {
   res.sendFile(path.join(clientBuild, 'index.html'));
