@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, Link } from 'react-router-dom';
-import { Bell, CheckCircle, Clock, Crown, ExternalLink, Home, Lock, MapPin, ShoppingBag, Star, Plus } from 'lucide-react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
+import { Bell, Crown, ExternalLink, Home, Lock, MapPin, ShoppingBag, Star, Plus } from 'lucide-react';
 import { conciergeApi, partnerHomesApi, partnerPerksApi, shopApi, stripeApi } from '../lib/api';
 import { useAuthStore } from '../lib/authStore';
-import { Button, Alert, EmptyState, EliteLockOverlay, PageLoader, StatusBadge, UrgencyBadge, Badge, EliteBadge, Modal } from '../components/ui';
+import { Button, Alert, EmptyState, PageLoader, StatusBadge, UrgencyBadge, Badge, EliteBadge, Modal } from '../components/ui';
 
 // ================================================================
 // CONCIERGE PAGE
@@ -27,10 +27,10 @@ export const ConciergePage: React.FC = () => {
   const [error, setError] = useState('');
 
   const { data, isLoading } = useQuery({ queryKey: ['my-concierge'], queryFn: conciergeApi.mine });
-  const requests = data?.data?.data || [];
+  const requests: Array<{ id: number; category: string; urgency: string; description: string; status: string; admin_notes: string | null; created_at: string }> = data?.data?.data || [];
 
   const mutation = useMutation({
-    mutationFn: () => conciergeApi.create({ category, urgency: urgency as 'low'|'medium'|'high'|'emergency', description }),
+    mutationFn: () => conciergeApi.create({ category, urgency: urgency as 'low' | 'medium' | 'high' | 'emergency', description }),
     onSuccess: () => {
       setShowForm(false); setDescription(''); setUrgency('low');
       setSuccess('Concierge request submitted! We\'ll be in touch soon.');
@@ -52,7 +52,6 @@ export const ConciergePage: React.FC = () => {
       {success && <div className="mb-5"><Alert type="success" message={success} onDismiss={() => setSuccess('')} /></div>}
       {error && <div className="mb-5"><Alert type="error" message={error} onDismiss={() => setError('')} /></div>}
 
-      {/* New request form */}
       {showForm && (
         <div className="bg-white rounded-2xl border border-amber-100 shadow-sm p-7 mb-7">
           <h2 className="font-display text-xl text-bask-dark mb-5">New Concierge Request</h2>
@@ -82,9 +81,7 @@ export const ConciergePage: React.FC = () => {
             </div>
             <div className="flex gap-3">
               <Button variant="secondary" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button loading={mutation.isPending} disabled={!description.trim()} onClick={() => mutation.mutate()}>
-                Submit Request
-              </Button>
+              <Button loading={mutation.isPending} disabled={!description.trim()} onClick={() => mutation.mutate()}>Submit Request</Button>
             </div>
           </div>
         </div>
@@ -96,7 +93,7 @@ export const ConciergePage: React.FC = () => {
           action={<Button icon={<Plus className="w-4 h-4" />} onClick={() => setShowForm(true)}>Submit a Request</Button>} />
       ) : (
         <div className="space-y-4">
-          {requests.map((req: { id: number; category: string; urgency: string; description: string; status: string; admin_notes: string | null; created_at: string }) => (
+          {requests.map(req => (
             <div key={req.id} className="bg-white rounded-2xl border border-amber-100 p-6 shadow-sm">
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div>
@@ -125,12 +122,34 @@ export const ConciergePage: React.FC = () => {
 // ================================================================
 // PARTNER HOMES PAGE
 // ================================================================
+interface HomeItem {
+  id: number;
+  name: string;
+  location: string;
+  country: string;
+  nightlyRate: number;
+  bedrooms: number;
+  bathrooms: number;
+  maxGuests: number;
+  vibeTags: string[];
+  clothingOptional: boolean;
+  isEliteOnly: boolean;
+  locked: boolean;
+  amenities: string[];
+  houseRules: string | null;
+  minStayNights: number;
+  checkInTime: string;
+  checkOutTime: string;
+  lgbtqFriendly: boolean;
+  description: string;
+}
+
 export const PartnerHomesPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const isElite = user?.membershipTier === 'Elite';
   const { data, isLoading } = useQuery({ queryKey: ['partner-homes'], queryFn: partnerHomesApi.getAll });
-  const homes = data?.data?.data || [];
+  const homes: HomeItem[] = data?.data?.data || [];
 
   if (isLoading) return <PageLoader />;
 
@@ -145,7 +164,7 @@ export const PartnerHomesPage: React.FC = () => {
         <EmptyState icon={<Home className="w-7 h-7" />} title="Partner homes coming soon" description="We're curating exclusive properties for the BASK community." />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {homes.map((home: { id: number; name: string; location: string; country: string; nightlyRate: number; bedrooms: number; maxGuests: number; vibeTags: string[]; clothingOptional: boolean; isEliteOnly: boolean; locked: boolean }) => (
+          {homes.map(home => (
             <div key={home.id} className="relative card">
               {home.locked && (
                 <div className="absolute inset-0 z-10 bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center rounded-2xl p-5 text-center">
@@ -163,7 +182,7 @@ export const PartnerHomesPage: React.FC = () => {
               </div>
               <div className="p-5">
                 <div className="flex flex-wrap gap-1.5 mb-3">
-                  {home.vibeTags?.slice(0,3).map((t: string) => <Badge key={t}>{t}</Badge>)}
+                  {home.vibeTags?.slice(0, 3).map(t => <Badge key={t}>{t}</Badge>)}
                   {home.isEliteOnly && <EliteBadge />}
                   {home.clothingOptional && <Badge color="amber">Clothing Optional</Badge>}
                 </div>
@@ -190,7 +209,7 @@ export const PartnerHomesPage: React.FC = () => {
 // HOME DETAIL PAGE
 // ================================================================
 export const HomeDetailPage: React.FC = () => {
-  const { id } = useParams?.() || {};
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
@@ -201,11 +220,15 @@ export const HomeDetailPage: React.FC = () => {
   const [success, setSuccess] = useState('');
 
   const { data, isLoading } = useQuery({ queryKey: ['partner-home', id], queryFn: () => partnerHomesApi.getById(Number(id)) });
-  const home = data?.data?.data;
+  const home: HomeItem | undefined = data?.data?.data;
 
   const mutation = useMutation({
     mutationFn: () => partnerHomesApi.stayRequest(Number(id), { checkInDate: checkIn, checkOutDate: checkOut, guestCount: guests, message }),
-    onSuccess: () => { setShowForm(false); setSuccess('Stay request submitted! We\'ll be in touch soon.'); queryClient.invalidateQueries({ queryKey: ['my-stay-requests'] }); },
+    onSuccess: () => {
+      setShowForm(false);
+      setSuccess('Stay request submitted! We\'ll be in touch soon.');
+      queryClient.invalidateQueries({ queryKey: ['my-stay-requests'] });
+    },
   });
 
   if (isLoading) return <PageLoader />;
@@ -227,7 +250,7 @@ export const HomeDetailPage: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           <p className="font-body text-bask-dark leading-relaxed">{home.description}</p>
           <div className="grid grid-cols-3 gap-3">
-            {[['Bedrooms', home.bedrooms], ['Bathrooms', home.bathrooms], ['Max Guests', home.maxGuests]].map(([k,v]) => (
+            {([['Bedrooms', home.bedrooms], ['Bathrooms', home.bathrooms], ['Max Guests', home.maxGuests]] as [string, number][]).map(([k, v]) => (
               <div key={k} className="p-4 rounded-xl bg-amber-50 border border-amber-100 text-center">
                 <p className="font-display text-2xl text-bask-terracotta">{v}</p>
                 <p className="text-bask-muted text-xs font-body">{k}</p>
@@ -238,7 +261,7 @@ export const HomeDetailPage: React.FC = () => {
             <div>
               <h3 className="font-display text-xl text-bask-dark mb-3">Amenities</h3>
               <div className="flex flex-wrap gap-2">
-                {home.amenities.map((a: string) => <Badge key={a}>{a}</Badge>)}
+                {home.amenities.map(a => <Badge key={a}>{a}</Badge>)}
               </div>
             </div>
           )}
@@ -254,7 +277,6 @@ export const HomeDetailPage: React.FC = () => {
           <div className="p-6 rounded-2xl border-2 border-amber-200 bg-white sticky top-24">
             <p className="font-display text-4xl text-bask-terracotta">${home.nightlyRate}</p>
             <p className="text-bask-muted text-xs font-body mb-5">per night · min. {home.minStayNights} nights</p>
-
             {!showForm ? (
               <Button className="w-full" onClick={() => setShowForm(true)}>Request a Stay</Button>
             ) : (
@@ -276,12 +298,10 @@ export const HomeDetailPage: React.FC = () => {
                 <textarea value={message} onChange={e => setMessage(e.target.value)} className="input-field text-sm resize-none" rows={3} placeholder="Message (optional)" />
                 <div className="flex gap-2">
                   <Button variant="secondary" size="sm" className="flex-1" onClick={() => setShowForm(false)}>Cancel</Button>
-                  <Button size="sm" className="flex-1" loading={mutation.isPending}
-                    disabled={!checkIn || !checkOut} onClick={() => mutation.mutate()}>Submit</Button>
+                  <Button size="sm" className="flex-1" loading={mutation.isPending} disabled={!checkIn || !checkOut} onClick={() => mutation.mutate()}>Submit</Button>
                 </div>
               </div>
             )}
-
             <div className="mt-4 space-y-1.5 text-xs font-body text-bask-muted">
               <p>Check-in: {home.checkInTime}</p>
               <p>Check-out: {home.checkOutTime}</p>
@@ -295,19 +315,24 @@ export const HomeDetailPage: React.FC = () => {
   );
 };
 
-// Helper for HomeDetailPage to use useParams
-import { useParams } from 'react-router-dom';
-
 // ================================================================
 // PARTNER PERKS PAGE
 // ================================================================
+interface PerkItem {
+  id: number;
+  partner_name: string;
+  description: string;
+  discount_details: string;
+  category: string;
+  website_url: string;
+}
+
 export const PartnerPerksPage: React.FC = () => {
   const { user } = useAuthStore();
   const isElite = user?.membershipTier === 'Elite';
   const { data, isLoading } = useQuery({ queryKey: ['partner-perks'], queryFn: partnerPerksApi.getAll, enabled: isElite });
-  const perks = data?.data?.data || [];
-
-  const categories = [...new Set(perks.map((p: { category: string }) => p.category))];
+  const perks: PerkItem[] = data?.data?.data || [];
+  const categories = [...new Set(perks.map(p => p.category))];
 
   if (!isElite) {
     return (
@@ -333,10 +358,10 @@ export const PartnerPerksPage: React.FC = () => {
       </div>
 
       {categories.map(cat => (
-        <div key={cat as string} className="mb-10">
-          <h2 className="font-display text-xl text-bask-dark mb-4">{cat as string}</h2>
+        <div key={cat} className="mb-10">
+          <h2 className="font-display text-xl text-bask-dark mb-4">{cat}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {perks.filter((p: { category: string }) => p.category === cat).map((perk: { id: number; partner_name: string; description: string; discount_details: string; website_url: string }) => (
+            {perks.filter(p => p.category === cat).map(perk => (
               <div key={perk.id} className="bg-white rounded-2xl border border-amber-100 p-5 flex gap-4 hover:border-amber-200 transition-colors">
                 <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
                   <Star className="w-5 h-5 text-bask-terracotta" />
@@ -363,16 +388,25 @@ export const PartnerPerksPage: React.FC = () => {
 // ================================================================
 // GIFT SHOP PAGE
 // ================================================================
+interface ProductItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  isEliteOnly: boolean;
+  locked: boolean;
+}
+
 export const GiftShopPage: React.FC = () => {
   const { user } = useAuthStore();
   const isElite = user?.membershipTier === 'Elite';
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   const { data, isLoading } = useQuery({ queryKey: ['shop-products'], queryFn: shopApi.getProducts });
-  const products = data?.data?.data || [];
-  const merch = products.filter((p: { category: string }) => p.category === 'merchandise');
-  const pearls = products.filter((p: { category: string }) => p.category === 'pearls');
+  const products: ProductItem[] = data?.data?.data || [];
+  const merch = products.filter(p => p.category === 'merchandise');
+  const pearls = products.filter(p => p.category === 'pearls');
 
   const handleBuy = async (productId: number) => {
     try {
@@ -390,7 +424,7 @@ export const GiftShopPage: React.FC = () => {
 
   if (isLoading) return <PageLoader />;
 
-  const ProductCard: React.FC<{ p: { id: number; name: string; description: string; price: number; isEliteOnly: boolean; locked: boolean } }> = ({ p }) => (
+  const ProductCard: React.FC<{ p: ProductItem }> = ({ p }) => (
     <div className="relative card p-5">
       {p.locked && (
         <div className="absolute inset-0 z-10 bg-white/85 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-4 text-center">
@@ -422,12 +456,11 @@ export const GiftShopPage: React.FC = () => {
       </div>
 
       {error && <div className="mb-5"><Alert type="error" message={error} onDismiss={() => setError('')} /></div>}
-      {success && <div className="mb-5"><Alert type="success" message={success} onDismiss={() => setSuccess('')} /></div>}
 
       <div className="mb-12">
         <h2 className="font-display text-2xl text-bask-dark mb-5">BASK Merchandise</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {merch.map((p: { id: number; name: string; description: string; price: number; isEliteOnly: boolean; locked: boolean }) => <ProductCard key={p.id} p={p} />)}
+          {merch.map(p => <ProductCard key={p.id} p={p} />)}
         </div>
       </div>
 
@@ -443,9 +476,13 @@ export const GiftShopPage: React.FC = () => {
           </div>
         )}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {pearls.map((p: { id: number; name: string; description: string; price: number; isEliteOnly: boolean; locked: boolean }) => <ProductCard key={p.id} p={p} />)}
+          {pearls.map(p => <ProductCard key={p.id} p={p} />)}
         </div>
       </div>
     </div>
   );
 };
+
+// Suppress unused import warning
+void Modal;
+void MapPin;
