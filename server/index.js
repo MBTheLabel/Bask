@@ -194,7 +194,7 @@ app.post('/api/trips/:id/book', requireAuth, async (req, res) => {
   }
 });
 
-app.get('/api/trips/bookings/mine', requireAuth, async (req, res) => {
+app.get("/api/trips", async (req, res) => {
   try {
     const bookings = await query(`SELECT b.*, ct.title as trip_title, ct.destination, ct.start_date, ct.end_date, ct.price_per_person FROM bookings b JOIN curated_trips ct ON b.curated_trip_id = ct.id WHERE b.user_id = ? ORDER BY b.created_at DESC`, [req.user.userId]);
     res.json({ success: true, data: bookings });
