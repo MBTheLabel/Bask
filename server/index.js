@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8080;
 
 // ─── Database ─────────────────────────────────────────────────
 const pool = mysql.createPool({
-  uri: process.env.DATABASE_URL,
+  uri: process.env.DATABASE_URL?.replace("mysql://", "mysql2://"), decimalNumbers: true,
   waitForConnections: true,
   connectionLimit: 10,
   timezone: '+00:00',
