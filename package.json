@@ -7,7 +7,7 @@
     "server:dev": "nodemon --exec ts-node server/index.ts",
     "client:dev": "cd client && npm run dev",
     "build": "cd client && npm install && npm run build",
-    "start": "node dist/server/index.js",
+    "start": "npx ts-node server/index.ts",
     "db:migrate": "node server/db/migrate.js"
   },
   "dependencies": {
