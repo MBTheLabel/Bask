@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
       const res = await authApi.login(data.email, data.password);
       const { token, user } = res.data.data;
       setAuth(user as AuthUser, token);
-      navigate(from, { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error || 'Login failed. Please try again.';
       setError(msg);
