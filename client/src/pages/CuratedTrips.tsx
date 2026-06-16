@@ -35,7 +35,7 @@ const TripCard: React.FC<{ trip: CuratedTrip }> = ({ trip }) => (
             <span className="text-bask-muted text-xs font-body">Itinerary — $50</span>
           ) : (
             <>
-              <span className="font-display text-2xl text-bask-terracotta">${trip.pricePerPerson.toLocaleString()}</span>
+              <span className="font-display text-2xl text-bask-terracotta">${Number(trip.price_per_person || 0).toLocaleString()}</span>
               <span className="text-bask-muted text-xs font-body ml-1">/person</span>
             </>
           )}
@@ -263,7 +263,7 @@ export const TripDetailPage: React.FC = () => {
           <div className="p-6 rounded-2xl border-2 border-amber-200 bg-white sticky top-24">
             {!trip.isPast ? (
               <>
-                <p className="font-display text-4xl text-bask-terracotta mb-1">${trip.pricePerPerson.toLocaleString()}</p>
+                <p className="font-display text-4xl text-bask-terracotta mb-1">${Number(trip.price_per_person || 0).toLocaleString()}</p>
                 <p className="text-bask-muted text-sm font-body mb-5">per person</p>
                 <Button className="w-full" size="lg" onClick={() => setBookingModal(true)}>
                   Request to Join

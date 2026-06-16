@@ -106,7 +106,7 @@ const TripCard: React.FC<{ trip: CuratedTrip; past?: boolean }> = ({ trip, past 
             <p className="text-bask-muted text-xs font-body">Itinerary available</p>
           ) : (
             <>
-              <p className="font-display text-2xl text-bask-terracotta">${trip.pricePerPerson.toLocaleString()}</p>
+              <p className="font-display text-2xl text-bask-terracotta">${Number(trip.price_per_person || 0).toLocaleString()}</p>
               <p className="text-bask-muted text-xs font-body">per person</p>
             </>
           )}

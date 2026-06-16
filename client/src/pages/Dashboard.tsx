@@ -105,7 +105,7 @@ const DashboardPage: React.FC = () => {
                     <p className="text-bask-muted text-xs font-body">{trip.destination} · {trip.startDate}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="font-display text-bask-terracotta text-lg">${trip.pricePerPerson.toLocaleString()}</p>
+                    <p className="font-display text-bask-terracotta text-lg">${Number(trip.price_per_person || 0).toLocaleString()}</p>
                     <p className="text-bask-muted text-xs font-body">per person</p>
                   </div>
                 </Link>
