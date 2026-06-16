@@ -81,8 +81,8 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 500 });
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
+const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 500, validate: false });
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30, validate: false });
 app.use('/api', apiLimiter);
 app.use('/api/auth', authLimiter);
 
