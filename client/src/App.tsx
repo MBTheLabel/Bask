@@ -76,6 +76,7 @@ const App: React.FC = () => (
           {/* Public */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/blog" element={<BlogPage />} />
+              <Route path="/events" element={<EventsPage />} />
           <Route path="/membership" element={<MembershipPage />} />
           <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
           <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
@@ -101,6 +102,7 @@ const App: React.FC = () => (
 
           {/* Admin */}
           <Route path="/blog" element={<BlogPage />} />
+              <Route path="/events" element={<EventsPage />} />
             <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
 
           {/* 404 */}
