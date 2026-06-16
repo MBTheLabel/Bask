@@ -433,3 +433,13 @@ shopRouter.get('/purchases/mine', requireAuth, async (req: Request, res: Respons
 });
 
 export { shopRouter };
+
+// Events
+router.get('/events', async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM events WHERE is_active = 1 ORDER BY created_at ASC');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch events' });
+  }
+});
