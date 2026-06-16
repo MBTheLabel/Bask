@@ -4,7 +4,7 @@ import { Users, Compass, Bell, Home, DollarSign, TrendingUp, Download, Search, C
 import { adminApi } from '../lib/api';
 import { Button, StatusBadge, UrgencyBadge, PageLoader, Alert } from '../components/ui';
 
-type AdminTab = 'overview' | 'customers' | 'trip-requests' | 'concierge' | 'bookings' | 'stay-requests' | 'purchases' | 'trips';
+type AdminTab = 'overview' | 'customers' | 'trip-requests' | 'concierge' | 'bookings' | 'stay-requests' | 'purchases' | 'trips' | 'events';
 
 const StatCard: React.FC<{ label: string; value: string | number; icon: React.ReactNode; sub?: string }> = ({ label, value, icon, sub }) => (
   <div className="bg-white rounded-2xl border border-amber-100 p-5">
