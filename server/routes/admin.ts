@@ -331,3 +331,29 @@ router.get('/export-pdf', async (_req: Request, res: Response): Promise<void> =>
 });
 
 export default router;
+
+// Admin Events CRUD
+router.get('/events', requireAuth, requireAdmin, async (_req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM events ORDER BY created_at DESC');
+    res.json({ data: rows });
+  } catch { res.status(500).json({ error: 'Failed' }); }
+});
+
+router.post('/events', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { title, date, time, location, description, capacity, price, tier, tags } = req.body;
+    const [result]: any = await pool.query(
+      'INSERT INTO events (title, date, time, location, description, capacity, price, tier, tags) VALUES (?,?,?,?,?,?,?,?,?)',
+      [title, date, time, location, description, capacity||50, price||0, tier||'standard', JSON.stringify(tags||[])]
+    );
+    res.json({ id: result.insertId });
+  } catch { res.status(500).json({ error: 'Failed' }); }
+});
+
+router.delete('/events/:id', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM events WHERE id = ?', [req.params.id]);
+    res.json({ success: true });
+  } catch { res.status(500).json({ error: 'Failed' }); }
+});

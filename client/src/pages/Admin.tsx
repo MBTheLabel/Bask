@@ -95,6 +95,7 @@ const AdminPage: React.FC = () => {
     { id: 'bookings', label: 'Bookings', icon: <Compass className="w-4 h-4" /> },
     { id: 'stay-requests', label: 'Stay Requests', icon: <Home className="w-4 h-4" /> },
     { id: 'purchases', label: 'Purchases', icon: <DollarSign className="w-4 h-4" /> },
+  { id: 'events', label: 'Events', icon: <Calendar className="w-4 h-4" /> },
   ];
 
   const EditRow: React.FC<{ id: number; currentStatus: string; statusOptions: string[]; onSave: (status: string, notes: string) => void; loading: boolean }> = ({ id, currentStatus, statusOptions, onSave, loading }) => {
@@ -376,4 +377,4 @@ const AdminPage: React.FC = () => {
   );
 };
 
-export default AdminPage;
+
