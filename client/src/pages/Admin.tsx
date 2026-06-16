@@ -340,7 +340,10 @@ const AdminPage: React.FC = () => {
           </form>
         </div>
       )}
-{tab === 'purchases' && (
+      {tab === 'events' && (
+        <AdminEventsTab token={localStorage.getItem('bask_token') || ''} />
+      )}
+      {tab === 'purchases' && (
         purchasesLoading ? <PageLoader /> : (
           <div>
             <div className="grid grid-cols-3 gap-4 mb-6">
