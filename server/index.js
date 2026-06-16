@@ -167,7 +167,7 @@ app.post('/api/auth/select-membership', requireAuth, async (req, res) => {
 app.get('/api/trips', async (req, res) => {
   try {
     const trips = await query('SELECT * FROM curated_trips WHERE is_active = 1 ORDER BY is_past ASC, start_date ASC');
-    res.json({ success: true, data: trips.map(t => ({ ...t, price_per_person: parseFloat(t.price_per_person) || 0, max_guests: parseInt(t.max_guests) || 0, tags: typeof t.tags === "string" ? JSON.parse(t.tags || "[]") : (t.tags || []) })) });
+    res.json({ success: true, data: trips.map(t => ({ ...t, isPast: Boolean(t.is_past), isActive: Boolean(t.is_active), startDate: t.start_date, endDate: t.end_date, maxGuests: t.max_guests, pricePerPerson: parseFloat(t.price_per_person) || 0, imageUrl: t.image_url, fullItinerary: t.full_itinerary, tags: typeof t.tags === "string" ? JSON.parse(t.tags || "[]") : (t.tags || []) })) });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to fetch trips' });
   }
@@ -177,7 +177,7 @@ app.get('/api/trips/:id', async (req, res) => {
   try {
     const trip = await queryOne('SELECT * FROM curated_trips WHERE id = ? AND is_active = 1', [req.params.id]);
     if (!trip) return res.status(404).json({ success: false, error: 'Trip not found' });
-    res.json({ success: true, data: { ...trip, tags: JSON.parse(trip.tags || '[]'), isPast: Boolean(trip.is_past), pricePerPerson: parseFloat(trip.price_per_person) } });
+    res.json({ success: true, data: { ...trip, isPast: Boolean(trip.is_past), isActive: Boolean(trip.is_active), startDate: trip.start_date, endDate: trip.end_date, maxGuests: trip.max_guests, pricePerPerson: parseFloat(trip.price_per_person) || 0, imageUrl: trip.image_url, fullItinerary: trip.full_itinerary, tags: typeof trip.tags === "string" ? JSON.parse(trip.tags || "[]") : (trip.tags || []) } });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to fetch trip' });
   }
