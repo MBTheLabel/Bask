@@ -18,7 +18,7 @@ const NAV_PUBLIC = [
 
 const NAV_MEMBER = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/curated-trips', label: 'Trips', icon: Compass },
+  { to: '/curated-trips', label: 'Experiences', icon: Compass },
   { to: '/my-trips', label: 'My Trips', icon: Compass },
   { to: '/concierge', label: 'Concierge', icon: Bell },
   { to: '/partner-homes', label: 'Homes', icon: Home },
@@ -212,7 +212,7 @@ export const Footer: React.FC = () => (
         <div>
           <h4 className="font-body font-semibold text-bask-cream/80 mb-3 text-sm uppercase tracking-wide">Experiences</h4>
           <ul className="space-y-2 text-sm text-bask-cream/50">
-            <li><Link to="/curated-trips" className="hover:text-bask-sand transition-colors">Curated Trips</Link></li>
+            <li><Link to="/curated-trips" className="hover:text-bask-sand transition-colors">Experiences</Link></li>
             <li><Link to="/partner-homes" className="hover:text-bask-sand transition-colors">Partner Homes</Link></li>
             <li><Link to="/beach-map" className="hover:text-bask-sand transition-colors">Beach Map</Link></li>
             <li><Link to="/concierge" className="hover:text-bask-sand transition-colors">Concierge</Link></li>
