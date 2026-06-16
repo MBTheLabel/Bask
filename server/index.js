@@ -167,7 +167,7 @@ app.post('/api/auth/select-membership', requireAuth, async (req, res) => {
 app.get('/api/trips', async (req, res) => {
   try {
     const trips = await query('SELECT * FROM curated_trips WHERE is_active = 1 ORDER BY is_past ASC, start_date ASC');
-    res.json({ success: true, data: trips.map(t => ({ ...t, tags: JSON.parse(t.tags || '[]'), isPast: Boolean(t.is_past), isActive: Boolean(t.is_active), pricePerPerson: parseFloat(t.price_per_person), maxGuests: t.max_guests, startDate: t.start_date, endDate: t.end_date })) });
+    res.json({ success: true, data: trips });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to fetch trips' });
   }
