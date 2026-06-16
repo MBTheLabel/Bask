@@ -17,10 +17,13 @@ const PORT = process.env.PORT || 8080;
 
 // ─── Database ─────────────────────────────────────────────────
 const pool = mysql.createPool({
-  uri: process.env.DATABASE_URL?.replace("mysql://", "mysql2://"), decimalNumbers: true,
+  host: process.env.MYSQLHOST,
+  port: parseInt(process.env.MYSQLPORT||"3306"),
+  user: process.env.MYSQLUSER||process.env.MYSQL_USER||"root",
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
   waitForConnections: true,
   connectionLimit: 10,
-  timezone: '+00:00',
 });
 
 async function query(sql, params) {
