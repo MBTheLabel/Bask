@@ -100,7 +100,8 @@ const App: React.FC = () => (
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
           {/* Admin */}
-          <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+          <Route path="/blog" element={<BlogPage />} />
+            <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
 
           {/* 404 */}
           <Route path="*" element={
