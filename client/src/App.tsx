@@ -22,6 +22,7 @@ import BeachMapPage from './pages/BeachMap';
 import MembershipPage from './pages/Membership';
 import ProfilePage from './pages/Profile';
 import BlogPage from './pages/Blog';
+import EventsPage from './pages/Events';
 import AdminPage from './pages/Admin';
 import MembershipGatePage from './pages/MembershipGate';
 
