@@ -610,3 +610,11 @@ async function start() {
 }
 
 start();
+
+app.post('/api/admin/trips', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { title, destination, country, description, start_date, end_date, price_per_person, max_guests, image_url, tags, full_itinerary } = req.body;
+    await query('INSERT INTO curated_trips (title, destination, country, description, start_date, end_date, price_per_person, max_guests, image_url, tags, full_itinerary, is_active, is_past) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0)', [title, destination, country, description, start_date, end_date, price_per_person, max_guests, image_url, typeof tags === "string" ? tags : JSON.stringify(tags), full_itinerary]);
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ success: false, error: 'Failed' }); }
+});

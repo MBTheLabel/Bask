@@ -312,7 +312,34 @@ const AdminPage: React.FC = () => {
       )}
 
       {/* PURCHASES */}
-      {tab === 'purchases' && (
+            {tab === 'trips' && (
+        <div className="space-y-6">
+          <h2 className="font-display text-xl text-bask-dark">Add New Trip</h2>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const f = e.target as any;
+            const body = { title: f.trip_title.value, destination: f.destination.value, country: f.country.value, description: f.description.value, start_date: f.start_date.value, end_date: f.end_date.value, price_per_person: parseFloat(f.price_per_person.value), max_guests: parseInt(f.max_guests.value), image_url: f.image_url.value, tags: JSON.stringify(f.tags.value.split(',').map((t: string) => t.trim())), full_itinerary: f.full_itinerary.value, is_active: 1, is_past: 0 };
+            const res = await fetch('/api/admin/trips', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('bask_token') }, body: JSON.stringify(body) });
+            if (res.ok) { alert('Trip added!'); (e.target as HTMLFormElement).reset(); } else { alert('Failed'); }
+          }} className="bg-white rounded-2xl p-6 border border-amber-100 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className="font-body text-sm text-bask-muted">Title</label><input name="trip_title" required className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+              <div><label className="font-body text-sm text-bask-muted">Destination</label><input name="destination" required className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+              <div><label className="font-body text-sm text-bask-muted">Country</label><input name="country" required className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+              <div><label className="font-body text-sm text-bask-muted">Price Per Person</label><input name="price_per_person" type="number" required className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+              <div><label className="font-body text-sm text-bask-muted">Start Date</label><input name="start_date" type="date" required className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+              <div><label className="font-body text-sm text-bask-muted">End Date</label><input name="end_date" type="date" required className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+              <div><label className="font-body text-sm text-bask-muted">Max Guests</label><input name="max_guests" type="number" required className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+              <div><label className="font-body text-sm text-bask-muted">Image URL</label><input name="image_url" className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+            </div>
+            <div><label className="font-body text-sm text-bask-muted">Description</label><textarea name="description" required rows={3} className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+            <div><label className="font-body text-sm text-bask-muted">Tags (comma separated)</label><input name="tags" placeholder="Beach, LGBTQ+, Luxury" className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+            <div><label className="font-body text-sm text-bask-muted">Full Itinerary</label><textarea name="full_itinerary" rows={5} className="w-full mt-1 px-3 py-2 border border-amber-100 rounded-lg font-body text-sm" /></div>
+            <button type="submit" className="bg-bask-terracotta text-white px-6 py-2.5 rounded-xl font-body font-medium">Add Trip</button>
+          </form>
+        </div>
+      )}
+{tab === 'purchases' && (
         purchasesLoading ? <PageLoader /> : (
           <div>
             <div className="grid grid-cols-3 gap-4 mb-6">
